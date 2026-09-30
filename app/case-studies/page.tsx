@@ -1,0 +1,6 @@
+import {cases} from "@/content/case-studies";
+import {SiteHeader} from "@/components/site-header";
+import {SiteFooter,PageCTA} from "@/components/site-footer";
+import {pageMeta} from "@/lib/seo";
+export const metadata=pageMeta("Client Case Studies","See how Google Ads and SEO helped Ridgewell Landscape & Design and Casey Insurance Group bring in revenue, visitors, and leads.","/case-studies");
+export default function Cases(){return <><SiteHeader/><main id="main"><section className="inner-hero"><div className="container"><span className="eyebrow">CASE STUDIES</span><h1>Real businesses.<br/><em>Results worth talking about.</em></h1><p>Different businesses. Different ways to get found. Here's what the work produced.</p></div></section><section className="section"><div className="container case-list">{cases.map((c,i)=><article className="case-feature" key={c.slug}><div className={'case-visual case-visual-'+i}>{c.image?<img src={c.image} alt="Ridgewell landscape and outdoor living project"/>:<><span>Casey Insurance Group</span><strong>2,000</strong><p>average monthly organic visitors</p></>}</div><div><span className="eyebrow">{c.service}</span><h2>{c.headline}</h2><h3>{c.name}</h3><p>{c.intro}</p><a href={'/case-studies/'+c.slug} className="button button-dark">Read the case study</a></div></article>)}</div></section><PageCTA/></main><SiteFooter/></>}
