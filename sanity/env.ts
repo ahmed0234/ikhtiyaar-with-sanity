@@ -1,20 +1,18 @@
 export const apiVersion =
-  process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2026-10-01'
+  process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2026-10-01';
 
-export const dataset = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_DATASET,
-  'Missing environment variable: NEXT_PUBLIC_SANITY_DATASET'
-)
+export const dataset =
+  process.env.NEXT_PUBLIC_SANITY_DATASET?.trim() || 'production';
 
-export const projectId = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  'Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID'
-)
+/**
+ * Sanity Project ID.
+ * Must only contain lowercase a-z, 0-9, and dashes.
+ * If unset, empty, or set to an invalid placeholder (e.g. containing underscores like 'your_project_id_here'),
+ * falls back to the project default ('bt5m0mkt') to prevent build failures during static page generation on Vercel.
+ */
+const rawProjectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID?.trim();
+export const projectId =
+  rawProjectId && /^[a-z0-9-]+$/.test(rawProjectId)
+    ? rawProjectId
+    : 'bt5m0mkt';
 
-function assertValue<T>(v: T | undefined, errorMessage: string): T {
-  if (v === undefined) {
-    throw new Error(errorMessage)
-  }
-
-  return v
-}
