@@ -1,10 +1,12 @@
 import { type SchemaTypeDefinition } from "sanity";
 import { landingPageType } from "./landingPageType";
 import { blogPostType } from "./blogPostType";
-import { postType } from "./postType";
+import { siteSettingsType } from "./siteSettingsType";
+import { googleAdsPageType } from "./googleAdsPageType";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   landingPageType,
   blogPostType,
-  postType,
+  siteSettingsType,
+  googleAdsPageType,
 ];

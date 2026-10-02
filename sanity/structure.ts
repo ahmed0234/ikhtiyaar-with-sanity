@@ -4,6 +4,19 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title("Content Management")
     .items([
+      // Global site settings (navbar, topbar, CTA) — singleton
+      S.listItem()
+        .title("Site Settings (Navbar & Global)")
+        .id("siteSettings")
+        .child(
+          S.document()
+            .schemaType("siteSettings")
+            .documentId("siteSettings")
+            .title("Site Settings")
+        ),
+
+      S.divider(),
+
       // Singleton document for the root landing page
       S.listItem()
         .title("Root Landing Page (/)")
@@ -14,11 +27,25 @@ export const structure: StructureResolver = (S) =>
             .documentId("landingPage")
             .title("Root Landing Page Content")
         ),
+
+      S.divider(),
+
+      // Google Ads service page — singleton
+      S.listItem()
+        .title("Google Ads Page (/services/google-ads)")
+        .id("googleAdsPage")
+        .child(
+          S.document()
+            .schemaType("googleAdsPage")
+            .documentId("googleAdsPage")
+            .title("Google Ads Page Content")
+        ),
+
       S.divider(),
 
       // Dedicated Blog Posts section
       S.listItem()
-        .title("Blog Posts (/Ahmed/blogs)")
+        .title("Blog Posts (/blog)")
         .id("blogPost")
         .child(
           S.documentTypeList("blogPost")
@@ -28,8 +55,12 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // Other document types if any (excluding singletons/explicitly placed items)
+      // Other document types (excluding singletons already placed above)
       ...S.documentTypeListItems().filter(
-        (listItem) => !["landingPage", "blogPost"].includes(listItem.getId() || "")
+        (listItem) =>
+          !["siteSettings", "landingPage", "blogPost", "googleAdsPage"].includes(
+            listItem.getId() || ""
+          )
       ),
     ]);
+

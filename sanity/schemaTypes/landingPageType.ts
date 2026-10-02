@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 import { defaultLandingPageContent } from "../initial-data";
 
 export const landingPageType = defineType({
@@ -7,10 +7,16 @@ export const landingPageType = defineType({
   type: "document",
   groups: [
     { name: "hero", title: "Hero Section", default: true },
+    { name: "testimonials", title: "Video Testimonials" },
+    { name: "socialProof", title: "Client Logos & Reassurance" },
     { name: "results", title: "Ridgewell Results & Stats" },
+    { name: "outcomes", title: "Outcomes (Here's Where We Come In)" },
     { name: "ownership", title: "Ownership (Stop Racing Leads)" },
-    { name: "outcomes", title: "Outcomes" },
+    { name: "process", title: "Process (How We Get Started)" },
+    { name: "trades", title: "Trades (Work You Want)" },
+    { name: "faq", title: "FAQ (Fair Questions)" },
     { name: "finalCta", title: "Final CTA" },
+    { name: "footer", title: "Footer" },
   ],
   fields: [
     // ----------------------------------------------------
@@ -83,10 +89,372 @@ export const landingPageType = defineType({
       group: "hero",
       initialValue: defaultLandingPageContent.heroTrust2,
     }),
+    defineField({
+      name: "googlePartnerImage",
+      title: "Google Partner Badge Image",
+      type: "image",
+      group: "hero",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative Text",
+          type: "string",
+          initialValue: "Google Partner",
+        }),
+      ],
+      description: "Upload a custom Google Partner badge image (defaults to /google-partner.svg).",
+    }),
+    defineField({
+      name: "hostingerPartnerImage",
+      title: "Hostinger Partner Badge Image",
+      type: "image",
+      group: "hero",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative Text",
+          type: "string",
+          initialValue: "Hostinger Partner",
+        }),
+      ],
+      description: "Upload a custom Hostinger Partner badge image (defaults to /hostinger-partner.webp).",
+    }),
+    defineField({
+      name: "heroFormKicker",
+      title: "Form Badge / Kicker",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormKicker,
+    }),
+    defineField({
+      name: "heroFormHeading",
+      title: "Form Card Heading",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormHeading,
+    }),
+    defineField({
+      name: "heroFormDescription",
+      title: "Form Card Description",
+      type: "text",
+      rows: 3,
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormDescription,
+    }),
+    defineField({
+      name: "heroFormFirstNameLabel",
+      title: "First Name Field Label",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormFirstNameLabel,
+    }),
+    defineField({
+      name: "heroFormLastNameLabel",
+      title: "Last Name Field Label",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormLastNameLabel,
+    }),
+    defineField({
+      name: "heroFormEmailLabel",
+      title: "Email Field Label",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormEmailLabel,
+    }),
+    defineField({
+      name: "heroFormPhoneLabel",
+      title: "Phone Field Label",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormPhoneLabel,
+    }),
+    defineField({
+      name: "heroFormTradeLabel",
+      title: "Trade / Work Field Label",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormTradeLabel,
+    }),
+    defineField({
+      name: "heroFormCityLabel",
+      title: "City / Service Area Field Label",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormCityLabel,
+    }),
+    defineField({
+      name: "heroFormCompanyLabel",
+      title: "Business Name Field Label",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormCompanyLabel,
+    }),
+    defineField({
+      name: "heroFormSubmitButtonText",
+      title: "Form Submit Button Text",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormSubmitButtonText,
+    }),
+    defineField({
+      name: "heroFormNote",
+      title: "Form Disclaimer Note",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormNote,
+    }),
+    defineField({
+      name: "heroFormConsent",
+      title: "Form Consent Copy",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormConsent,
+    }),
+    defineField({
+      name: "heroFormPrivacyText",
+      title: "Privacy Policy Link Label",
+      type: "string",
+      group: "hero",
+      initialValue: defaultLandingPageContent.heroFormPrivacyText,
+    }),
 
     // ----------------------------------------------------
-    // RIDGEWELL RESULTS & STATS (Screenshot 2)
+    // VIDEO TESTIMONIALS (Screenshot)
     // ----------------------------------------------------
+    defineField({
+      name: "testimonialsEyebrow",
+      title: "Testimonials Eyebrow Badge",
+      type: "string",
+      group: "testimonials",
+      initialValue: defaultLandingPageContent.testimonialsEyebrow,
+    }),
+    defineField({
+      name: "testimonialsHeading",
+      title: "Testimonials Heading",
+      type: "text",
+      rows: 2,
+      group: "testimonials",
+      initialValue: defaultLandingPageContent.testimonialsHeading,
+    }),
+    defineField({
+      name: "testimonialsDescription",
+      title: "Testimonials Description",
+      type: "text",
+      rows: 2,
+      group: "testimonials",
+      initialValue: defaultLandingPageContent.testimonialsDescription,
+    }),
+    defineField({
+      name: "testimonialsList",
+      title: "Video Testimonials",
+      description:
+        "Add, remove, reorder, or edit video testimonials. You can add 3rd, 4th, or more testimonials dynamically.",
+      type: "array",
+      group: "testimonials",
+      initialValue: defaultLandingPageContent.testimonialsList,
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "testimonialItem",
+          title: "Testimonial Card",
+          fields: [
+            defineField({
+              name: "name",
+              title: "Client Name",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "roleCompany",
+              title: "Role & Company",
+              description: 'e.g. "Owner, Swisher Capital"',
+              type: "string",
+              initialValue: "Owner, Swisher Capital",
+            }),
+            defineField({
+              name: "youtubeUrl",
+              title: "YouTube Video Link / URL",
+              description:
+                "Paste full YouTube URL, youtu.be short link, or 11-character video ID",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "thumbnail",
+              title: "Custom Thumbnail Image",
+              type: "image",
+              options: { hotspot: true },
+              description:
+                "Upload custom thumbnail image (optional). If empty, the YouTube video thumbnail is automatically used.",
+            }),
+            defineField({
+              name: "watchStoryText",
+              title: "Watch Story Overlay Text",
+              type: "string",
+              initialValue: "Watch their story",
+            }),
+            defineField({
+              name: "tag",
+              title: "Badge / Tag Text",
+              type: "string",
+              initialValue: "CLIENT STORY",
+            }),
+          ],
+          preview: {
+            select: {
+              title: "name",
+              subtitle: "roleCompany",
+              media: "thumbnail",
+            },
+            prepare({ title, subtitle, media }) {
+              return {
+                title: title || "Untitled Testimonial",
+                subtitle: subtitle || "Video Testimonial",
+                media,
+              };
+            },
+          },
+        }),
+      ],
+    }),
+
+    // ----------------------------------------------------
+    // CLIENT LOGOS & REASSURANCE STRIP (Image 1)
+    // ----------------------------------------------------
+    defineField({
+      name: "clientLogosHeading",
+      title: "Client Band Heading",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.clientLogosHeading,
+    }),
+    defineField({
+      name: "clientLogosList",
+      title: "Client Logos",
+      description: "Manage client logos shown in the client band.",
+      type: "array",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.clientLogosList,
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "clientLogoItem",
+          title: "Client Logo",
+          fields: [
+            defineField({
+              name: "name",
+              title: "Company Name",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "logo",
+              title: "Logo Image",
+              type: "image",
+              options: { hotspot: true },
+              description: "Upload custom logo image (PNG/WebP/SVG).",
+            }),
+            defineField({
+              name: "style",
+              title: "CSS Sizing Key",
+              type: "string",
+              description: "Optional CSS sizing class (e.g. ridgewell, casey, beckon, swisher).",
+            }),
+          ],
+          preview: {
+            select: {
+              title: "name",
+              media: "logo",
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "reassurance1Title",
+      title: "Reassurance 1 Title (Phone)",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.reassurance1Title,
+    }),
+    defineField({
+      name: "reassurance1Description",
+      title: "Reassurance 1 Description",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.reassurance1Description,
+    }),
+    defineField({
+      name: "reassurance2Title",
+      title: "Reassurance 2 Title (Key)",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.reassurance2Title,
+    }),
+    defineField({
+      name: "reassurance2Description",
+      title: "Reassurance 2 Description",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.reassurance2Description,
+    }),
+    defineField({
+      name: "reassurance3Title",
+      title: "Reassurance 3 Title (Location Pin)",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.reassurance3Title,
+    }),
+    defineField({
+      name: "reassurance3Description",
+      title: "Reassurance 3 Description",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.reassurance3Description,
+    }),
+    defineField({
+      name: "reassurance4Title",
+      title: "Reassurance 4 Title (Chart)",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.reassurance4Title,
+    }),
+    defineField({
+      name: "reassurance4Description",
+      title: "Reassurance 4 Description",
+      type: "string",
+      group: "socialProof",
+      initialValue: defaultLandingPageContent.reassurance4Description,
+    }),
+
+    // ----------------------------------------------------
+    // RIDGEWELL RESULTS & STATS (Screenshot 2 / Image 2)
+    // ----------------------------------------------------
+    defineField({
+      name: "resultsProjectImage",
+      title: "Case Study Project Image",
+      type: "image",
+      group: "results",
+      options: { hotspot: true },
+      description: "Upload custom case study image (defaults to /ridgewell-project.webp).",
+    }),
+    defineField({
+      name: "resultsProjectName",
+      title: "Case Study Project Name",
+      type: "string",
+      group: "results",
+      initialValue: defaultLandingPageContent.resultsProjectName,
+    }),
+    defineField({
+      name: "resultsProjectLocation",
+      title: "Case Study Project Location",
+      type: "string",
+      group: "results",
+      initialValue: defaultLandingPageContent.resultsProjectLocation,
+    }),
     defineField({
       name: "resultsEyebrow",
       title: "Results Eyebrow",
@@ -213,7 +581,7 @@ export const landingPageType = defineType({
     }),
 
     // ----------------------------------------------------
-    // OUTCOMES SECTION
+    // OUTCOMES SECTION (Image 1)
     // ----------------------------------------------------
     defineField({
       name: "outcomesEyebrow",
@@ -236,6 +604,301 @@ export const landingPageType = defineType({
       rows: 2,
       group: "outcomes",
       initialValue: defaultLandingPageContent.outcomesSubtitle,
+    }),
+    defineField({
+      name: "outcomesCard1Number",
+      title: "Card 1 Number",
+      type: "string",
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard1Number,
+    }),
+    defineField({
+      name: "outcomesCard1Title",
+      title: "Card 1 Title",
+      type: "text",
+      rows: 2,
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard1Title,
+    }),
+    defineField({
+      name: "outcomesCard1Description",
+      title: "Card 1 Description",
+      type: "text",
+      rows: 3,
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard1Description,
+    }),
+    defineField({
+      name: "outcomesCard1Bottom",
+      title: "Card 1 Bottom Checklist Text",
+      type: "string",
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard1Bottom,
+    }),
+    defineField({
+      name: "outcomesCard2Number",
+      title: "Card 2 Number",
+      type: "string",
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard2Number,
+    }),
+    defineField({
+      name: "outcomesCard2Title",
+      title: "Card 2 Title",
+      type: "text",
+      rows: 2,
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard2Title,
+    }),
+    defineField({
+      name: "outcomesCard2Description",
+      title: "Card 2 Description",
+      type: "text",
+      rows: 3,
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard2Description,
+    }),
+    defineField({
+      name: "outcomesCard2Bottom",
+      title: "Card 2 Bottom Checklist Text",
+      type: "string",
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard2Bottom,
+    }),
+    defineField({
+      name: "outcomesCard3Number",
+      title: "Card 3 Number",
+      type: "string",
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard3Number,
+    }),
+    defineField({
+      name: "outcomesCard3Title",
+      title: "Card 3 Title",
+      type: "text",
+      rows: 2,
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard3Title,
+    }),
+    defineField({
+      name: "outcomesCard3Description",
+      title: "Card 3 Description",
+      type: "text",
+      rows: 3,
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard3Description,
+    }),
+    defineField({
+      name: "outcomesCard3Bottom",
+      title: "Card 3 Bottom Checklist Text",
+      type: "string",
+      group: "outcomes",
+      initialValue: defaultLandingPageContent.outcomesCard3Bottom,
+    }),
+
+    // ----------------------------------------------------
+    // PROCESS SECTION (Image 2)
+    // ----------------------------------------------------
+    defineField({
+      name: "processEyebrow",
+      title: "Process Eyebrow",
+      type: "string",
+      group: "process",
+      initialValue: defaultLandingPageContent.processEyebrow,
+    }),
+    defineField({
+      name: "processHeading",
+      title: "Process Heading",
+      type: "string",
+      group: "process",
+      initialValue: defaultLandingPageContent.processHeading,
+    }),
+    defineField({
+      name: "processSubtitle",
+      title: "Process Subtitle",
+      type: "text",
+      rows: 2,
+      group: "process",
+      initialValue: defaultLandingPageContent.processSubtitle,
+    }),
+    defineField({
+      name: "processStep1Number",
+      title: "Step 1 Number",
+      type: "string",
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep1Number,
+    }),
+    defineField({
+      name: "processStep1Title",
+      title: "Step 1 Title",
+      type: "string",
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep1Title,
+    }),
+    defineField({
+      name: "processStep1Description",
+      title: "Step 1 Description",
+      type: "text",
+      rows: 3,
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep1Description,
+    }),
+    defineField({
+      name: "processStep2Number",
+      title: "Step 2 Number",
+      type: "string",
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep2Number,
+    }),
+    defineField({
+      name: "processStep2Title",
+      title: "Step 2 Title",
+      type: "string",
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep2Title,
+    }),
+    defineField({
+      name: "processStep2Description",
+      title: "Step 2 Description",
+      type: "text",
+      rows: 3,
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep2Description,
+    }),
+    defineField({
+      name: "processStep3Number",
+      title: "Step 3 Number",
+      type: "string",
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep3Number,
+    }),
+    defineField({
+      name: "processStep3Title",
+      title: "Step 3 Title",
+      type: "string",
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep3Title,
+    }),
+    defineField({
+      name: "processStep3Description",
+      title: "Step 3 Description",
+      type: "text",
+      rows: 3,
+      group: "process",
+      initialValue: defaultLandingPageContent.processStep3Description,
+    }),
+
+    // ----------------------------------------------------
+    // TRADES SECTION (Image 3)
+    // ----------------------------------------------------
+    defineField({
+      name: "tradesEyebrow",
+      title: "Trades Eyebrow",
+      type: "string",
+      group: "trades",
+      initialValue: defaultLandingPageContent.tradesEyebrow,
+    }),
+    defineField({
+      name: "tradesHeading",
+      title: "Trades Heading",
+      type: "text",
+      rows: 2,
+      group: "trades",
+      initialValue: defaultLandingPageContent.tradesHeading,
+    }),
+    defineField({
+      name: "tradesDescription",
+      title: "Trades Description",
+      type: "text",
+      rows: 2,
+      group: "trades",
+      initialValue: defaultLandingPageContent.tradesDescription,
+    }),
+    defineField({
+      name: "tradesList",
+      title: "Trade / Service Pills",
+      description: "List of services/trades displayed as interactive pills.",
+      type: "array",
+      group: "trades",
+      initialValue: defaultLandingPageContent.tradesList,
+      of: [defineArrayMember({ type: "string" })],
+    }),
+
+    // ----------------------------------------------------
+    // FAQ SECTION (Image 4)
+    // ----------------------------------------------------
+    defineField({
+      name: "faqEyebrow",
+      title: "FAQ Eyebrow",
+      type: "string",
+      group: "faq",
+      initialValue: defaultLandingPageContent.faqEyebrow,
+    }),
+    defineField({
+      name: "faqHeading",
+      title: "FAQ Heading",
+      type: "text",
+      rows: 2,
+      group: "faq",
+      initialValue: defaultLandingPageContent.faqHeading,
+    }),
+    defineField({
+      name: "faqDescription",
+      title: "FAQ Description",
+      type: "text",
+      rows: 3,
+      group: "faq",
+      initialValue: defaultLandingPageContent.faqDescription,
+    }),
+    defineField({
+      name: "faqPhoneDisplay",
+      title: "FAQ Phone Display Text",
+      type: "string",
+      group: "faq",
+      initialValue: defaultLandingPageContent.faqPhoneDisplay,
+    }),
+    defineField({
+      name: "faqPhoneTel",
+      title: "FAQ Phone Link (tel:)",
+      type: "string",
+      group: "faq",
+      initialValue: defaultLandingPageContent.faqPhoneTel,
+    }),
+    defineField({
+      name: "faqItems",
+      title: "Frequently Asked Questions",
+      description: "Manage FAQ questions and answers. You can add, edit, or reorder questions.",
+      type: "array",
+      group: "faq",
+      initialValue: defaultLandingPageContent.faqItems,
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "faqItem",
+          title: "FAQ Item",
+          fields: [
+            defineField({
+              name: "question",
+              title: "Question",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "answer",
+              title: "Answer",
+              type: "text",
+              rows: 4,
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: "question",
+              subtitle: "answer",
+            },
+          },
+        }),
+      ],
     }),
 
     // ----------------------------------------------------
@@ -277,6 +940,160 @@ export const landingPageType = defineType({
       type: "string",
       group: "finalCta",
       initialValue: defaultLandingPageContent.finalMicroCopy,
+    }),
+
+    // ----------------------------------------------------
+    // FOOTER SECTION
+    // ----------------------------------------------------
+    defineField({
+      name: "footerLogo",
+      title: "Footer Logo Image",
+      type: "image",
+      group: "footer",
+      options: { hotspot: true },
+      description: "Upload custom footer logo (defaults to /ikhtiyaar-logo.png).",
+    }),
+    defineField({
+      name: "footerLogoAlt",
+      title: "Footer Logo Alt Text",
+      type: "string",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerLogoAlt,
+    }),
+    defineField({
+      name: "footerLogoHref",
+      title: "Footer Logo Link Destination",
+      type: "string",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerLogoHref,
+    }),
+    defineField({
+      name: "footerTagline",
+      title: "Footer Tagline / Paragraph",
+      type: "text",
+      rows: 2,
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerTagline,
+    }),
+    defineField({
+      name: "footerNavHeading",
+      title: "Explore Column Heading",
+      type: "string",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerNavHeading,
+    }),
+    defineField({
+      name: "footerNavLinks",
+      title: "Explore Navigation Links",
+      description: "Manage links in the Explore column. You can add, edit, or reorder links.",
+      type: "array",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerNavLinks,
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "footerNavLink",
+          title: "Navigation Link",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Link Label",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "href",
+              title: "Link Destination (URL / Path)",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: "label",
+              subtitle: "href",
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "footerContactHeading",
+      title: "Contact Column Heading",
+      type: "string",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerContactHeading,
+    }),
+    defineField({
+      name: "footerPhoneDisplay",
+      title: "Phone Number Display",
+      type: "string",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerPhoneDisplay,
+    }),
+    defineField({
+      name: "footerPhoneTel",
+      title: "Phone Number Link (tel:)",
+      type: "string",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerPhoneTel,
+    }),
+    defineField({
+      name: "footerEmail",
+      title: "Contact Email Address",
+      type: "string",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerEmail,
+    }),
+    defineField({
+      name: "footerAddress",
+      title: "Mailing Address",
+      type: "text",
+      rows: 2,
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerAddress,
+    }),
+    defineField({
+      name: "footerCopyright",
+      title: "Footer Copyright Text",
+      type: "string",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerCopyright,
+    }),
+    defineField({
+      name: "footerLegalLinks",
+      title: "Bottom Legal & Utility Links",
+      description: "Manage bottom links (Privacy, Terms, Cookies, Accessibility, Admin portal, Get in touch).",
+      type: "array",
+      group: "footer",
+      initialValue: defaultLandingPageContent.footerLegalLinks,
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "footerLegalLink",
+          title: "Legal Link",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Link Label",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "href",
+              title: "Link Destination (URL / Path)",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: "label",
+              subtitle: "href",
+            },
+          },
+        }),
+      ],
     }),
   ],
   preview: {

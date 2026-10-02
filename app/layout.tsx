@@ -6,6 +6,8 @@ import { SanityLive } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { draftMode } from "next/headers";
 
+import { SanityLivePreview } from "@/components/sanity-live-preview";
+
 export const metadata: Metadata = {
   title: "Ikhtiyaar LLC | More Good Jobs. Fewer Quiet Weeks.",
   description:
@@ -25,8 +27,10 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         {children}
-        <SanityLive />
-        {isDraftMode && <VisualEditing />}
+        <SanityLivePreview>
+          <SanityLive />
+          {isDraftMode && <VisualEditing />}
+        </SanityLivePreview>
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, Fragment, type FormEvent } from "react";
 import {
   Phone,
   Check,
@@ -37,67 +37,60 @@ import {
 
 import { SiteFooter } from "@/components/site-footer";
 import { ConsentVideo } from "@/components/consent-video";
-import { SiteHeader } from "@/components/site-header";
 import { ClientLogos } from "@/components/client-logos";
 import { testimonials, youtubeId } from "@/content/testimonials";
-import type { LandingPageContent } from "@/sanity/initial-data";
+import {
+  type LandingPageContent,
+  type SanityTestimonialItem,
+  defaultLandingPageContent,
+} from "@/sanity/initial-data";
+import { stegaClean } from "@sanity/client/stega";
+import { createDataAttribute } from "next-sanity";
+import { projectId, dataset } from "@/sanity/env";
 
-const trades = [
-  "Landscaping & hardscaping",
-  "Roofing",
-  "Remodeling",
-  "Concrete & paving",
-  "Moving",
-  "Other home services",
-];
-
-const faqs = [
-  [
-    "Are you selling the same leads to other contractors?",
-    "No. People see your business and contact you directly. We don't take one person's details and sell them to five different companies. You're building a source of inquiries for your own business.",
-  ],
-  [
-    "What do you actually do to bring the calls in?",
-    "We put your business in front of people looking for the work you do. That usually means Google Ads, a clear page showing your work, and a simple way to call or request an estimate. We can also help you show up in Google's regular search results. We handle the setup and ongoing work.",
-  ],
-  [
-    "How much do I need to spend?",
-    "That depends on your area, the jobs you want, and what you make on each job. We look at those numbers before recommending a budget. You'll see the ad budget and our fee separately, so you know where your money is going.",
-  ],
-  [
-    "I've tried this before. What would be different?",
-    "First, we'd look at what happened. Were the calls for the wrong service? Outside your area? Were good inquiries going unanswered? We want to find the actual problem before asking you to spend another dollar.",
-  ],
-  [
-    "Can you guarantee a certain number of jobs?",
-    "No one can honestly promise that every inquiry will become a job. We can help you attract the right people and track what happens next. The estimate, your pricing, and how quickly you follow up all matter too. We'll agree on what a good inquiry looks like before we start.",
-  ],
-  [
-    "What if my crew is already booked out?",
-    "Tell us. We can adjust the ad budget around the work you can actually take on, or focus on the types of jobs you want next. You shouldn't have to keep pushing for more calls when you can't handle them.",
-  ],
-  [
-    "Do I need to learn any of the technical stuff?",
-    "No. We take care of that. You tell us where you work, what jobs you want, and which inquiries are turning into customers. We explain the results in normal language, and your accounts and information stay yours.",
-  ],
-];
+function renderMultiline(text?: string | null) {
+  if (!text) return null;
+  if (!text.includes("\n")) return text;
+  return text.split("\n").map((line, i) => (
+    <Fragment key={i}>
+      {i > 0 && <br />}
+      {line}
+    </Fragment>
+  ));
+}
 
 interface HomePageClientProps {
   content: LandingPageContent;
 }
 
 export function HomePageClient({ content }: HomePageClientProps) {
+  const dataSanity = createDataAttribute({
+    id: (content as any)._id || "landingPage",
+    type: (content as any)._type || "landingPage",
+    baseUrl: "/studio",
+    projectId,
+    dataset,
+  });
+
   const [trade, setTrade] = useState("");
   const [status, setStatus] = useState<
     "idle" | "sending" | "success" | "error"
   >("idle");
   const [error, setError] = useState("");
-  const [activeVideo, setActiveVideo] = useState<
-    (typeof testimonials)[number] | null
-  >(null);
+  const [activeVideo, setActiveVideo] = useState<SanityTestimonialItem | null>(null);
+
+  const activeTrades =
+    Array.isArray(content.tradesList) && content.tradesList.length > 0
+      ? content.tradesList
+      : defaultLandingPageContent.tradesList;
+
+  const activeFaqs =
+    Array.isArray(content.faqItems) && content.faqItems.length > 0
+      ? content.faqItems
+      : defaultLandingPageContent.faqItems;
 
   function chooseTrade(value: string) {
-    setTrade(value);
+    setTrade(stegaClean(value));
     document
       .getElementById("contact")
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -137,8 +130,6 @@ export function HomePageClient({ content }: HomePageClientProps) {
 
   return (
     <>
-      <SiteHeader />
-
       <main id="main">
         {/* ---------------------------------------------------------------- */}
         {/* HERO SECTION (Screenshot 1) */}
@@ -150,15 +141,17 @@ export function HomePageClient({ content }: HomePageClientProps) {
               <div className="partner-badges" aria-label="Our partners">
                 <img
                   className="google-partner-badge"
-                  src="/google-partner.svg"
-                  alt="Google Partner"
+                  src={stegaClean(content.googlePartnerImageUrl) || "/google-partner.svg"}
+                  alt={content.googlePartnerImageAlt || "Google Partner"}
+                  data-sanity={dataSanity("googlePartnerImage")}
                 />
                 <img
                   className="hostinger-partner-badge"
-                  src="/hostinger-partner.webp"
-                  alt="Hostinger Partner"
+                  src={stegaClean(content.hostingerPartnerImageUrl) || "/hostinger-partner.webp"}
+                  alt={content.hostingerPartnerImageAlt || "Hostinger Partner"}
                   width="240"
                   height="240"
+                  data-sanity={dataSanity("hostingerPartnerImage")}
                 />
               </div>
 
@@ -227,35 +220,55 @@ export function HomePageClient({ content }: HomePageClientProps) {
               ) : (
                 <>
                   <div className="form-kicker">
-                    <span>LET'S START WITH YOUR AREA</span>
+                    <span>{content.heroFormKicker || "LET'S START WITH YOUR AREA"}</span>
                     <span className="free-tag">FREE</span>
                   </div>
                   <h2>
-                    Could this work <br />
-                    for your business?
+                    {content.heroFormHeading ? (
+                      content.heroFormHeading === "Could this work for your business?" ? (
+                        <>
+                          Could this work <br />
+                          for your business?
+                        </>
+                      ) : content.heroFormHeading.includes("\n") ? (
+                        content.heroFormHeading.split("\n").map((line, i) => (
+                          <Fragment key={i}>
+                            {i > 0 && <br />}
+                            {line}
+                          </Fragment>
+                        ))
+                      ) : (
+                        content.heroFormHeading
+                      )
+                    ) : (
+                      <>
+                        Could this work <br />
+                        for your business?
+                      </>
+                    )}
                   </h2>
                   <p className="form-intro">
-                    Tell us a little about what you do. We'll look at the
-                    demand, the costs, and whether the numbers make sense.
+                    {content.heroFormDescription ||
+                      "Tell us a little about what you do. We'll look at the demand, the costs, and whether the numbers make sense."}
                   </p>
                   <form onSubmit={submit}>
                     <div className="field-grid">
                       <label>
-                        First name
+                        {content.heroFormFirstNameLabel || "First name"}
                         <input
                           name="firstName"
                           autoComplete="given-name"
-                          placeholder="First name"
+                          placeholder={stegaClean(content.heroFormFirstNameLabel) || "First name"}
                           required
                           maxLength={80}
                         />
                       </label>
                       <label>
-                        Last name
+                        {content.heroFormLastNameLabel || "Last name"}
                         <input
                           name="lastName"
                           autoComplete="family-name"
-                          placeholder="Last name"
+                          placeholder={stegaClean(content.heroFormLastNameLabel) || "Last name"}
                           required
                           maxLength={80}
                         />
@@ -263,7 +276,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
                     </div>
                     <div className="field-grid">
                       <label>
-                        Email
+                        {content.heroFormEmailLabel || "Email"}
                         <input
                           name="email"
                           type="email"
@@ -274,7 +287,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
                         />
                       </label>
                       <label>
-                        Phone
+                        {content.heroFormPhoneLabel || "Phone"}
                         <input
                           name="phone"
                           type="tel"
@@ -289,9 +302,9 @@ export function HomePageClient({ content }: HomePageClientProps) {
                     <div className="field-grid">
                       <div className="field">
                         <label id="trade-label" htmlFor="trade">
-                          What work do you do?
+                          {content.heroFormTradeLabel || "What work do you do?"}
                         </label>
-                        <Select value={trade} onValueChange={setTrade}>
+                        <Select value={trade} onValueChange={(val) => setTrade(stegaClean(val))}>
                           <SelectTrigger
                             id="trade"
                             aria-labelledby="trade-label"
@@ -300,8 +313,8 @@ export function HomePageClient({ content }: HomePageClientProps) {
                             <SelectValue placeholder="Choose your trade" />
                           </SelectTrigger>
                           <SelectContent position="popper">
-                            {trades.map((t) => (
-                              <SelectItem key={t} value={t}>
+                            {activeTrades.map((t) => (
+                              <SelectItem key={stegaClean(t)} value={stegaClean(t)}>
                                 {t}
                               </SelectItem>
                             ))}
@@ -309,7 +322,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
                         </Select>
                       </div>
                       <label>
-                        City / service area
+                        {content.heroFormCityLabel || "City / service area"}
                         <input
                           name="city"
                           placeholder="e.g. Denver, CO"
@@ -320,7 +333,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
                       </label>
                     </div>
                     <label className="company-field">
-                      Business name
+                      {content.heroFormCompanyLabel || "Business name"}
                       <input
                         name="company"
                         autoComplete="organization"
@@ -351,14 +364,14 @@ export function HomePageClient({ content }: HomePageClientProps) {
                     >
                       {status === "sending"
                         ? "Sending your details..."
-                        : "Let's look at my area"}
+                        : content.heroFormSubmitButtonText || "Let's look at my area"}
                     </button>
                     <p className="form-note">
-                      <ShieldCheck size={14} /> No pressure. No obligation.
+                      <ShieldCheck size={14} /> {content.heroFormNote || "No pressure. No obligation."}
                     </p>
                     <p className="form-consent">
-                      We'll only contact you about your request.{" "}
-                      <a href="/privacy">Privacy Policy</a>
+                      {content.heroFormConsent || "We'll only contact you about your request."}{" "}
+                      <a href="/privacy">{content.heroFormPrivacyText || "Privacy Policy"}</a>
                     </p>
                   </form>
                 </>
@@ -378,55 +391,112 @@ export function HomePageClient({ content }: HomePageClientProps) {
           <div className="container">
             <div className="section-heading testimonial-heading">
               <div>
-                <span className="eyebrow">IN THEIR OWN WORDS</span>
+                <span className="eyebrow">
+                  {content.testimonialsEyebrow || "IN THEIR OWN WORDS"}
+                </span>
                 <h2 id="testimonials-heading">
-                  Hear it from the people
-                  <br />
-                  we work with.
+                  {content.testimonialsHeading ? (
+                    content.testimonialsHeading ===
+                      "Hear it from the people we work with." ||
+                    content.testimonialsHeading ===
+                      "Hear it from the people\nwe work with." ? (
+                      <>
+                        Hear it from the people
+                        <br />
+                        we work with.
+                      </>
+                    ) : content.testimonialsHeading.includes("\n") ? (
+                      content.testimonialsHeading.split("\n").map((line, i) => (
+                        <Fragment key={i}>
+                          {i > 0 && <br />}
+                          {line}
+                        </Fragment>
+                      ))
+                    ) : (
+                      content.testimonialsHeading
+                    )
+                  ) : (
+                    <>
+                      Hear it from the people
+                      <br />
+                      we work with.
+                    </>
+                  )}
                 </h2>
               </div>
               <p>
-                What's it actually like working with us? Let our clients tell
-                you.
+                {content.testimonialsDescription ||
+                  "What's it actually like working with us? Let our clients tell you."}
               </p>
             </div>
             <div className="testimonial-grid">
-              {testimonials
+              {(Array.isArray(content.testimonialsList) &&
+              content.testimonialsList.length > 0
+                ? content.testimonialsList
+                : defaultLandingPageContent.testimonialsList
+              )
                 .filter((t) => youtubeId(t.youtubeUrl))
-                .map((t) => (
-                  <article className="testimonial-card" key={t.youtubeUrl}>
-                    <button
-                      className="testimonial-video"
-                      onClick={() => setActiveVideo(t)}
-                      aria-label={`Watch ${t.name}'s testimonial`}
+                .map((t: SanityTestimonialItem, idx: number) => {
+                  const rawThumb =
+                    (t.thumbnailUrl ? stegaClean(t.thumbnailUrl) : "") ||
+                    (t.thumbnail ? stegaClean(t.thumbnail) : "") ||
+                    (youtubeId(t.youtubeUrl)
+                      ? `https://img.youtube.com/vi/${youtubeId(t.youtubeUrl)}/hqdefault.jpg`
+                      : "/testimonial-michael.webp");
+
+                  const displayRole =
+                    t.roleCompany ||
+                    (t.company
+                      ? t.company.startsWith("Owner")
+                        ? t.company
+                        : `Owner, ${t.company}`
+                      : "");
+
+                  return (
+                    <article
+                      className="testimonial-card"
+                      key={t._key || t.youtubeUrl || idx}
                     >
-                      <img
-                        src={t.thumbnail}
-                        alt={t.name}
-                        width="640"
-                        height="360"
-                        loading="lazy"
-                      />
-                      <span className="video-shade" />
-                      <span className="video-play">
-                        <Play size={27} fill="currentColor" />
-                      </span>
-                      <span className="video-watch">Watch their story</span>
-                    </button>
-                    <div className="testimonial-caption">
-                      <div>
-                        <h3>{t.name}</h3>
-                        <p>Owner, {t.company}</p>
+                      <button
+                        className="testimonial-video"
+                        onClick={() => setActiveVideo(t)}
+                        aria-label={`Watch ${t.name}'s testimonial`}
+                      >
+                        <img
+                          src={rawThumb}
+                          alt={t.name}
+                          width="640"
+                          height="360"
+                          loading="lazy"
+                        />
+                        <span className="video-shade" />
+                        <span className="video-play">
+                          <Play size={27} fill="currentColor" />
+                        </span>
+                        <span className="video-watch">
+                          {t.watchStoryText || "Watch their story"}
+                        </span>
+                      </button>
+                      <div className="testimonial-caption">
+                        <div>
+                          <h3>{t.name}</h3>
+                          {displayRole && <p>{displayRole}</p>}
+                        </div>
+                        <span className="testimonial-label">
+                          {t.tag || "CLIENT STORY"}
+                        </span>
                       </div>
-                      <span className="testimonial-label">CLIENT STORY</span>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
             </div>
           </div>
         </section>
 
-        <ClientLogos />
+        <ClientLogos
+          heading={content.clientLogosHeading}
+          logos={content.clientLogosList}
+        />
 
         <section className="reassurance" aria-label="What you can expect">
           <div className="container reassurance-grid">
@@ -435,8 +505,8 @@ export function HomePageClient({ content }: HomePageClientProps) {
                 <PhoneCall />
               </span>
               <p>
-                <strong>No shared leads</strong>
-                <span>People contact your business.</span>
+                <strong>{content.reassurance1Title || "No shared leads"}</strong>
+                <span>{content.reassurance1Description || "People contact your business."}</span>
               </p>
             </div>
             <div>
@@ -444,8 +514,8 @@ export function HomePageClient({ content }: HomePageClientProps) {
                 <KeyRound />
               </span>
               <p>
-                <strong>You own what we build</strong>
-                <span>Your accounts. Your information.</span>
+                <strong>{content.reassurance2Title || "You own what we build"}</strong>
+                <span>{content.reassurance2Description || "Your accounts. Your information."}</span>
               </p>
             </div>
             <div>
@@ -453,8 +523,8 @@ export function HomePageClient({ content }: HomePageClientProps) {
                 <MapPin />
               </span>
               <p>
-                <strong>Your jobs. Your area.</strong>
-                <span>Built around the work you want.</span>
+                <strong>{content.reassurance3Title || "Your jobs. Your area."}</strong>
+                <span>{content.reassurance3Description || "Built around the work you want."}</span>
               </p>
             </div>
             <div>
@@ -462,8 +532,8 @@ export function HomePageClient({ content }: HomePageClientProps) {
                 <BarChart3 />
               </span>
               <p>
-                <strong>Numbers you understand</strong>
-                <span>What you spent. What came back.</span>
+                <strong>{content.reassurance4Title || "Numbers you understand"}</strong>
+                <span>{content.reassurance4Description || "What you spent. What came back."}</span>
               </p>
             </div>
           </div>
@@ -477,65 +547,67 @@ export function HomePageClient({ content }: HomePageClientProps) {
             <div className="project-image-wrap">
               <img
                 className="project-image"
-                src="/ridgewell-project.webp"
+                src={stegaClean(content.resultsProjectImageUrl) || "/ridgewell-project.webp"}
                 alt="Outdoor living and hardscaping image featured in the Ridgewell Landscape & Design case study"
                 width="703"
                 height="396"
                 loading="lazy"
               />
               <div className="project-caption">
-                <span>{content.resultsProjectName}</span>
+                <span>{content.resultsProjectName || "RIDGEWELL LANDSCAPE & DESIGN"}</span>
                 <span>
-                  <MapPin size={14} /> {content.resultsProjectLocation}
+                  <MapPin size={14} /> {content.resultsProjectLocation || "Colorado"}
                 </span>
               </div>
               <div className="project-badge">
-                <span>{content.resultsBadgeEyebrow}</span>
+                <span>{content.resultsBadgeEyebrow || "REAL CLIENT RESULTS"}</span>
                 <strong>
-                  {content.resultsBadgeTitle}
+                  {content.resultsBadgeTitle || "Good work. More people seeing it."}
                 </strong>
               </div>
             </div>
             <div className="results-copy">
-              <span className="eyebrow">{content.resultsEyebrow}</span>
+              <span className="eyebrow">{content.resultsEyebrow || "LESS TALK. HERE'S WHAT HAPPENED."}</span>
 
               {/* Red-box heading in Screenshot 2 (Sanity managed) */}
               <h2>
-                {content.resultsHeading}
+                {content.resultsHeading || "More people asking. More work coming in."}
               </h2>
 
               <p>
-                {content.resultsDescription}
+                {content.resultsDescription ||
+                  "Ridgewell wanted more landscaping and hardscaping projects. We helped homeowners in their area find them and get in touch."}
               </p>
 
               {/* Red-box stats in Screenshot 2 (Sanity managed) */}
               <div className="result-stats">
                 <div>
-                  <strong>{content.stat1Value}</strong>
+                  <strong>{content.stat1Value || "2200+"}</strong>
                   <span>
-                    {content.stat1Label}
+                    {content.stat1Label || "homeowner inquiries in two months"}
                   </span>
                 </div>
                 <div>
-                  <strong>{content.stat2Value}</strong>
+                  <strong>{content.stat2Value || "$500k"}</strong>
                   <span>
-                    {content.stat2Label}
+                    {content.stat2Label || "in client-reported revenue"}
                   </span>
                 </div>
               </div>
 
               <p className="results-note">
-                {content.resultsDisclaimer}
+                {content.resultsDisclaimer ||
+                  "One client's results, not a promise of what every business will make. Revenue is not profit."}
               </p>
               <a href="#contact" className="text-link">
-                {content.resultsCtaText}
+                {content.resultsCtaText || "Let's look at the numbers for your business"}
               </a>
             </div>
           </div>
         </section>
 
         {/* ---------------------------------------------------------------- */}
-        {/* OUTCOMES SECTION */}
+        {/* OUTCOMES SECTION (Image 1) */}
         {/* ---------------------------------------------------------------- */}
         <section id="what-we-do" className="section outcomes-section">
           <div className="container">
@@ -543,7 +615,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
               <div>
                 <span className="eyebrow">{content.outcomesEyebrow}</span>
                 <h2>
-                  {content.outcomesHeading}
+                  {renderMultiline(content.outcomesHeading)}
                 </h2>
               </div>
               <p>
@@ -552,48 +624,42 @@ export function HomePageClient({ content }: HomePageClientProps) {
             </div>
             <div className="outcomes-grid">
               <article className="outcome-card">
-                <span className="card-number">01</span>
+                <span className="card-number">{content.outcomesCard1Number || "01"}</span>
                 <PhoneCall className="outcome-icon" size={32} />
                 <h3>
-                  Get calls for work <br />
-                  you actually want.
+                  {renderMultiline(content.outcomesCard1Title || "Get calls for work\nyou actually want.")}
                 </h3>
                 <p>
-                  More patios? Full roof replacements? Bigger remodels? We focus
-                  on your best jobs and the places you want to work.
+                  {content.outcomesCard1Description || "More patios? Full roof replacements? Bigger remodels? We focus on your best jobs and the places you want to work."}
                 </p>
                 <div className="card-bottom">
-                  <Check size={17} /> Your services. Your service area.
+                  <Check size={17} /> {content.outcomesCard1Bottom || "Your services. Your service area."}
                 </div>
               </article>
               <article className="outcome-card">
-                <span className="card-number">02</span>
+                <span className="card-number">{content.outcomesCard2Number || "02"}</span>
                 <MousePointer2 className="outcome-icon" size={32} />
                 <h3>
-                  Give people a reason <br />
-                  to choose you.
+                  {renderMultiline(content.outcomesCard2Title || "Give people a reason\nto choose you.")}
                 </h3>
                 <p>
-                  We show your work, explain what makes you a good choice, and
-                  make it easy for someone to pick up the phone.
+                  {content.outcomesCard2Description || "We show your work, explain what makes you a good choice, and make it easy for someone to pick up the phone."}
                 </p>
                 <div className="card-bottom">
-                  <Check size={17} /> A clear path from looking to calling.
+                  <Check size={17} /> {content.outcomesCard2Bottom || "A clear path from looking to calling."}
                 </div>
               </article>
               <article className="outcome-card">
-                <span className="card-number">03</span>
+                <span className="card-number">{content.outcomesCard3Number || "03"}</span>
                 <BarChart3 className="outcome-icon" size={32} />
                 <h3>
-                  See if the money <br />
-                  is making you money.
+                  {renderMultiline(content.outcomesCard3Title || "See if the money\nis making you money.")}
                 </h3>
                 <p>
-                  We keep track of the calls and estimate requests. Together, we
-                  look at which ones become jobs and what needs to change.
+                  {content.outcomesCard3Description || "We keep track of the calls and estimate requests. Together, we look at which ones become jobs and what needs to change."}
                 </p>
                 <div className="card-bottom">
-                  <Check size={17} /> Simple answers about your results.
+                  <Check size={17} /> {content.outcomesCard3Bottom || "Simple answers about your results."}
                 </div>
               </article>
             </div>
@@ -627,38 +693,35 @@ export function HomePageClient({ content }: HomePageClientProps) {
         </section>
 
         {/* ---------------------------------------------------------------- */}
-        {/* PROCESS SECTION */}
+        {/* PROCESS SECTION (Image 2) */}
         {/* ---------------------------------------------------------------- */}
         <section id="how-it-works" className="section process-section">
           <div className="container">
             <div className="section-heading centered">
-              <span className="eyebrow">PRETTY STRAIGHTFORWARD</span>
-              <h2>Here's how we'd get started.</h2>
-              <p>No homework. No long marketing presentation.</p>
+              <span className="eyebrow">{content.processEyebrow || "PRETTY STRAIGHTFORWARD"}</span>
+              <h2>{renderMultiline(content.processHeading || "Here's how we'd get started.")}</h2>
+              <p>{content.processSubtitle || "No homework. No long marketing presentation."}</p>
             </div>
             <div className="process-grid">
               <article>
-                <div className="step-marker">1</div>
-                <h3>Tell us what you want more of.</h3>
+                <div className="step-marker">{content.processStep1Number || "1"}</div>
+                <h3>{content.processStep1Title || "Tell us what you want more of."}</h3>
                 <p>
-                  The jobs you like, the areas you cover, and how much work your
-                  crew can take on.
+                  {content.processStep1Description || "The jobs you like, the areas you cover, and how much work your crew can take on."}
                 </p>
               </article>
               <article>
-                <div className="step-marker">2</div>
-                <h3>We'll work through the numbers.</h3>
+                <div className="step-marker">{content.processStep2Number || "2"}</div>
+                <h3>{content.processStep2Title || "We'll work through the numbers."}</h3>
                 <p>
-                  We check local demand and likely costs. If the budget doesn't
-                  make sense, we'll tell you.
+                  {content.processStep2Description || "We check local demand and likely costs. If the budget doesn't make sense, we'll tell you."}
                 </p>
               </article>
               <article>
-                <div className="step-marker">3</div>
-                <h3>We set it up. You take the calls.</h3>
+                <div className="step-marker">{content.processStep3Number || "3"}</div>
+                <h3>{content.processStep3Title || "We set it up. You take the calls."}</h3>
                 <p>
-                  Once we agree on a plan, we handle the setup and keep
-                  improving it as we learn what brings good work.
+                  {content.processStep3Description || "Once we agree on a plan, we handle the setup and keep improving it as we learn what brings good work."}
                 </p>
               </article>
             </div>
@@ -666,24 +729,22 @@ export function HomePageClient({ content }: HomePageClientProps) {
         </section>
 
         {/* ---------------------------------------------------------------- */}
-        {/* TRADES PILLS */}
+        {/* TRADES PILLS (Image 3) */}
         {/* ---------------------------------------------------------------- */}
         <section className="trades-section">
           <div className="container trades-grid">
             <div>
-              <span className="eyebrow">BUILT AROUND YOUR BUSINESS</span>
+              <span className="eyebrow">{content.tradesEyebrow || "BUILT AROUND YOUR BUSINESS"}</span>
               <h2>
-                What kind of work <br />
-                do you want more of?
+                {renderMultiline(content.tradesHeading || "What kind of work\ndo you want more of?")}
               </h2>
               <p>
-                A roof replacement and a moving job have different numbers. Your
-                plan should too.
+                {content.tradesDescription || "A roof replacement and a moving job have different numbers. Your plan should too."}
               </p>
             </div>
             <div className="trade-pills">
-              {trades.map((t) => (
-                <button key={t} onClick={() => chooseTrade(t)}>
+              {activeTrades.map((t) => (
+                <button key={stegaClean(t)} onClick={() => chooseTrade(t)}>
                   {t}
                   <Plus size={18} />
                 </button>
@@ -693,22 +754,27 @@ export function HomePageClient({ content }: HomePageClientProps) {
         </section>
 
         {/* ---------------------------------------------------------------- */}
-        {/* FAQ SECTION */}
+        {/* FAQ SECTION (Image 4) */}
         {/* ---------------------------------------------------------------- */}
         <section id="questions" className="section faq-section">
           <div className="container faq-grid">
             <div>
-              <span className="eyebrow">FAIR QUESTIONS</span>
+              <span className="eyebrow">{content.faqEyebrow || "FAIR QUESTIONS"}</span>
               <h2>
-                Let's clear <br />a few things up.
+                {renderMultiline(content.faqHeading || "Let's clear\na few things up.")}
               </h2>
               <p>
-                Wondering about your own situation? <br />
-                Just ask. We'll give you a straight answer.
+                {renderMultiline(
+                  content.faqDescription ||
+                    "Wondering about your own situation?\nJust ask. We'll give you a straight answer."
+                )}
               </p>
-              <a href="tel:+19547873401" className="phone-link">
+              <a
+                href={`tel:${stegaClean(content.faqPhoneTel || "+19547873401")}`}
+                className="phone-link"
+              >
                 <Phone size={18} />
-                (954) 787-3401
+                {content.faqPhoneDisplay || "(954) 787-3401"}
               </a>
             </div>
             <Accordion
@@ -717,13 +783,13 @@ export function HomePageClient({ content }: HomePageClientProps) {
               className="faq-list"
               defaultValue="faq-0"
             >
-              {faqs.map(([q, a], i) => (
-                <AccordionItem key={q} value={`faq-${i}`}>
+              {activeFaqs.map((item, i) => (
+                <AccordionItem key={item._key || `faq-${i}`} value={`faq-${i}`}>
                   <AccordionTrigger className="faq-trigger">
-                    {q}
+                    {item.question}
                   </AccordionTrigger>
                   <AccordionContent className="faq-answer">
-                    {a}
+                    {item.answer}
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -756,7 +822,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter content={content} />
       <Dialog
         open={!!activeVideo}
         onOpenChange={(open) => {
@@ -767,7 +833,7 @@ export function HomePageClient({ content }: HomePageClientProps) {
           <DialogHeader>
             <DialogTitle>{activeVideo?.name}</DialogTitle>
             <DialogDescription>
-              {activeVideo?.company} · Client testimonial
+              {(activeVideo?.roleCompany || activeVideo?.company)} · Client testimonial
             </DialogDescription>
           </DialogHeader>
           {activeVideo && (

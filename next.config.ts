@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
+  compress: false,
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -8,33 +9,9 @@ const config: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "utfs.io",
-      },
-      {
-        protocol: "https",
-        hostname: "*.ufs.sh",
-      },
-      {
-        protocol: "https",
         hostname: "cdn.sanity.io",
       },
     ],
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/Ahmed/blogs",
-        destination: "/ahmed/blogs",
-      },
-      {
-        source: "/Ahmed/blog/:slug*",
-        destination: "/ahmed/blog/:slug*",
-      },
-      {
-        source: "/Ahmed/blog",
-        destination: "/ahmed/blogs",
-      },
-    ];
   },
   async headers() {
     return [
