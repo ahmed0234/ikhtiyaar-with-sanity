@@ -1,24 +1,24 @@
 import { sanityFetch } from "@/sanity/lib/live";
-import { CASE_STUDIES_PAGE_QUERY } from "@/sanity/lib/queries";
+import { RIDGEWELL_CASE_STUDY_QUERY } from "@/sanity/lib/queries";
 import {
-  defaultCaseStudiesContent,
-  type CaseStudiesPageContent,
-} from "@/sanity/schemaTypes/caseStudiesPageType";
+  defaultRidgewellCaseStudyContent,
+  type RidgewellCaseStudyContent,
+} from "@/sanity/schemaTypes/ridgewellCaseStudyType";
 import { SiteHeader } from "@/components/site-header";
 import { SanityFooter } from "@/components/sanity-footer";
-import { CaseStudiesPageClient } from "@/components/case-studies-page-client";
+import { RidgewellCaseStudyClient } from "@/components/ridgewell-case-study-client";
 import { pageMeta } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = pageMeta(
-  "Client Case Studies",
-  "See how Google Ads and SEO helped Ridgewell Landscape & Design and Casey Insurance Group bring in revenue, visitors, and leads.",
-  "/case-studies"
+  "Ridgewell Landscape & Design Case Study",
+  "Ridgewell's result shows why we look beyond clicks. The number that matters is what those inquiries turn into for the business.",
+  "/case-studies/ridgewell-landscape-design"
 );
 
-export default async function CasesPage() {
+export default async function RidgewellCaseStudyPage() {
   const { data: pageData } = await sanityFetch({
-    query: CASE_STUDIES_PAGE_QUERY,
+    query: RIDGEWELL_CASE_STUDY_QUERY,
   });
 
   // Merge Sanity data over defaults — empty/null fields never erase built-in copy
@@ -34,15 +34,15 @@ export default async function CasesPage() {
       )
     : {};
 
-  const content: CaseStudiesPageContent = {
-    ...defaultCaseStudiesContent,
+  const content: RidgewellCaseStudyContent = {
+    ...defaultRidgewellCaseStudyContent,
     ...clean,
-  } as CaseStudiesPageContent;
+  } as RidgewellCaseStudyContent;
 
   return (
     <>
       <SiteHeader />
-      <CaseStudiesPageClient content={content} />
+      <RidgewellCaseStudyClient content={content} />
       <SanityFooter />
     </>
   );

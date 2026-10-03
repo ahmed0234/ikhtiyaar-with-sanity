@@ -1,13 +1,16 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter, PageCTA } from "@/components/site-footer";
 import { sanityFetch } from "@/sanity/lib/live";
 import { BLOG_POST_QUERY } from "@/sanity/lib/queries";
 import { urlForImage } from "@/sanity/lib/image";
 import { PortableTextRenderer } from "@/components/portable-text-renderer";
+import { ArticleShareButton } from "@/components/article-share-button";
 import { SITE_URL } from "@/lib/seo";
 import type { SanityBlogPostDetail } from "@/sanity/lib/types";
+import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -110,6 +113,11 @@ export default async function ArticlePage({
       })
     : null;
 
+  const readingTime =
+    post.estimatedReadingTime && post.estimatedReadingTime > 0
+      ? post.estimatedReadingTime
+      : 1;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -137,36 +145,30 @@ export default async function ArticlePage({
   return (
     <>
       <SiteHeader />
-      <main id="main" className="section" style={{ paddingTop: "2.5rem", paddingBottom: "5rem" }}>
-        <div className="container" style={{ maxWidth: "860px", margin: "0 auto", padding: "0 1.25rem" }}>
-          {/* Breadcrumb Navigation */}
-          <div style={{ marginBottom: "2rem" }}>
-            <a
-              className="breadcrumb dark"
-              href="/blog"
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
-            >
-              ← Back to all articles
-            </a>
+      <main
+        id="main"
+        className="section"
+        style={{
+          background: "linear-gradient(180deg, #ffffff 0%, #f8fbfe 300px, #ffffff 100%)",
+          paddingTop: "2rem",
+          paddingBottom: "6rem",
+        }}
+      >
+        <article className="article-main-container">
+          {/* Top Bar: Back Link + Share Button */}
+          <div className="article-top-bar">
+            <Link href="/blog" className="article-back-link">
+              <ArrowLeft size={15} />
+              <span>Back to all articles</span>
+            </Link>
+            <ArticleShareButton title={post.title} />
           </div>
 
-          {/* Categories */}
+          {/* Categories Badges */}
           {post.categories && post.categories.length > 0 && (
-            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem" }}>
+            <div className="article-categories">
               {post.categories.map((cat) => (
-                <span
-                  key={cat}
-                  style={{
-                    fontSize: "0.75rem",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                    background: "#e0f2fe",
-                    color: "#0369a1",
-                    padding: "0.25rem 0.65rem",
-                    borderRadius: "4px",
-                  }}
-                >
+                <span key={cat} className="article-cat-pill">
                   {cat}
                 </span>
               ))}
@@ -174,174 +176,121 @@ export default async function ArticlePage({
           )}
 
           {/* Article Title */}
-          <h1
-            style={{
-              fontSize: "clamp(2.1rem, 4vw, 3.25rem)",
-              fontWeight: 800,
-              lineHeight: 1.15,
-              letterSpacing: "-0.02em",
-              color: "#0f172a",
-              marginBottom: "1.25rem",
-            }}
-          >
-            {post.title}
-          </h1>
+          <h1 className="article-title">{post.title}</h1>
 
-          {/* Metadata Row: Author, Date, Reading Time */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "1rem",
-              paddingBottom: "1.75rem",
-              borderBottom: "1px solid #e2e8f0",
-              color: "#64748b",
-              fontSize: "0.95rem",
-            }}
-          >
-            {post.author && (
-              <span style={{ fontWeight: 600, color: "#1e293b" }}>
-                By {post.author}
+          {/* Editorial Lead Paragraph / Excerpt */}
+          {post.excerpt && <p className="article-lead-text">{post.excerpt}</p>}
+
+          {/* Author & Meta Bar */}
+          <div className="article-meta-bar">
+            <div className="article-author-info">
+              <div className="article-author-avatar">
+                {post.author ? post.author.slice(0, 2).toUpperCase() : "IK"}
+              </div>
+              <div>
+                <div className="article-author-name">
+                  {post.author || "Ikhtiyaar Team"}
+                </div>
+                <div className="article-author-role">Marketing & Strategy</div>
+              </div>
+            </div>
+
+            <div className="article-meta-divider" />
+
+            <div className="article-meta-details">
+              {dateFormatted && (
+                <span className="article-meta-item">
+                  <Calendar size={14} />
+                  <span>{dateFormatted}</span>
+                </span>
+              )}
+              {updatedDateFormatted && (
+                <span className="article-meta-item" style={{ fontStyle: "italic", fontSize: "0.825rem" }}>
+                  (Updated: {updatedDateFormatted})
+                </span>
+              )}
+              <span className="article-meta-dot">·</span>
+              <span className="article-meta-item">
+                <Clock size={14} />
+                <span>{readingTime} min read</span>
               </span>
-            )}
-            {dateFormatted && <span>{dateFormatted}</span>}
-            {updatedDateFormatted && (
-              <span style={{ fontStyle: "italic", fontSize: "0.85rem" }}>
-                (Updated: {updatedDateFormatted})
-              </span>
-            )}
-            {post.estimatedReadingTime && (
-              <span>· {post.estimatedReadingTime} min read</span>
-            )}
+            </div>
           </div>
 
-          {/* Featured Image */}
+          {/* Featured Image Frame */}
           {featuredImageUrl && (
-            <figure style={{ margin: "2.5rem 0" }}>
+            <figure className="article-cover-frame">
               <img
                 src={featuredImageUrl}
                 alt={post.featuredImage?.alt || post.title}
-                style={{
-                  width: "100%",
-                  maxHeight: "560px",
-                  objectFit: "cover",
-                  borderRadius: "12px",
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.07)",
-                }}
+                className="article-cover-img"
               />
               {post.featuredImage?.caption && (
-                <figcaption
-                  style={{
-                    textAlign: "center",
-                    fontSize: "0.875rem",
-                    color: "#64748b",
-                    marginTop: "0.6rem",
-                    fontStyle: "italic",
-                  }}
-                >
+                <figcaption className="article-cover-caption">
                   {post.featuredImage.caption}
                 </figcaption>
               )}
             </figure>
           )}
 
-          {/* Lead Paragraph / Excerpt */}
-          {post.excerpt && (
-            <div
-              style={{
-                fontSize: "1.25rem",
-                lineHeight: 1.65,
-                color: "#1e293b",
-                fontWeight: 500,
-                marginBottom: "2.5rem",
-                paddingBottom: "1.5rem",
-                borderBottom: "1px solid #f1f5f9",
-              }}
-            >
-              {post.excerpt}
-            </div>
-          )}
-
-          {/* Rich Body Content (Portable Text) */}
-          <div className="article-body">
+          {/* Rich Content Body (Portable Text) */}
+          <div className="article-content-body">
             <PortableTextRenderer value={post.content} />
           </div>
 
-          {/* Tags */}
+          {/* Topic Tags */}
           {post.tags && post.tags.length > 0 && (
-            <div
-              style={{
-                marginTop: "3.5rem",
-                paddingTop: "1.5rem",
-                borderTop: "1px solid #e2e8f0",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                flexWrap: "wrap",
-              }}
-            >
-              <strong style={{ fontSize: "0.85rem", color: "#475569", marginRight: "0.5rem" }}>
-                Topics:
-              </strong>
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    fontSize: "0.8rem",
-                    background: "#f8fafc",
-                    color: "#475569",
-                    border: "1px solid #e2e8f0",
-                    padding: "0.2rem 0.6rem",
-                    borderRadius: "6px",
-                  }}
-                >
-                  #{tag}
-                </span>
-              ))}
+            <div className="article-tags-wrap">
+              <span className="article-tags-label">Topics:</span>
+              <div className="article-tags-list">
+                {post.tags.map((tag) => (
+                  <span key={tag} className="article-tag-chip">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
-          {/* Author / Editorial Box */}
-          <div
-            style={{
-              marginTop: "3rem",
-              padding: "1.75rem",
-              background: "#f8fafc",
-              border: "1px solid #e2e8f0",
-              borderRadius: "12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "1.25rem",
-            }}
-          >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "50%",
-                background: "#0f172a",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 700,
-                fontSize: "1.1rem",
-                flexShrink: 0,
-              }}
-            >
-              IK
+          {/* Author Editorial Card */}
+          <div className="article-author-card">
+            <div className="article-author-card-avatar">
+              {post.author ? post.author.slice(0, 2).toUpperCase() : "IK"}
             </div>
-            <div>
-              <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 700, color: "#0f172a" }}>
-                Published by {post.author || "Ikhtiyaar LLC"}
-              </h3>
-              <p style={{ margin: "0.25rem 0 0", fontSize: "0.9rem", color: "#64748b", lineHeight: 1.5 }}>
-                Providing clear, straightforward marketing advice and inquiry generation systems for service businesses.
+            <div className="article-author-card-body">
+              <div className="article-author-card-badge">PUBLISHED BY</div>
+              <h3>{post.author || "Ikhtiyaar LLC"}</h3>
+              <p>
+                Providing clear, straightforward marketing advice and inquiry
+                generation systems for service businesses that want more good
+                jobs and fewer quiet weeks.
               </p>
+              <div className="article-author-links">
+                <Link href="/about" className="article-author-link">
+                  About our company →
+                </Link>
+                <Link href="/case-studies" className="article-author-link">
+                  See client results →
+                </Link>
+                <Link href="/#contact" className="article-author-link">
+                  Work with us →
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+
+          {/* Navigation Banner back to Blog */}
+          <div className="article-nav-banner">
+            <div>
+              <h4>Looking for more marketing insights?</h4>
+              <p>Explore all our articles and practical guides for service businesses.</p>
+            </div>
+            <Link href="/blog" className="button button-blue" style={{ whiteSpace: "nowrap" }}>
+              <span>View all articles</span>
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+        </article>
       </main>
 
       <PageCTA />

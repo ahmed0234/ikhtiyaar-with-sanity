@@ -24,6 +24,11 @@ export default async function Service({
 }) {
   const { slug } = await params;
   if (slug.toLowerCase() === "google-ads") redirect("/services/google-ads");
+  if (slug.toLowerCase() === "meta-ads") redirect("/services/meta-ads");
+  if (slug.toLowerCase() === "seo") redirect("/services/seo");
+  if (slug.toLowerCase() === "cold-email") redirect("/services/cold-email");
+  if (slug.toLowerCase() === "chatgpt-ads") redirect("/services/chatgpt-ads");
+  if (slug.toLowerCase() === "aeo") redirect("/services/aeo");
   const s = services.find((x) => x.slug === slug);
   if (!s) notFound();
   const detail = serviceDetails[s.slug];

@@ -1,24 +1,24 @@
 import { sanityFetch } from "@/sanity/lib/live";
-import { CASE_STUDIES_PAGE_QUERY } from "@/sanity/lib/queries";
+import { CASEY_CASE_STUDY_QUERY } from "@/sanity/lib/queries";
 import {
-  defaultCaseStudiesContent,
-  type CaseStudiesPageContent,
-} from "@/sanity/schemaTypes/caseStudiesPageType";
+  defaultCaseyCaseStudyContent,
+  type CaseyCaseStudyContent,
+} from "@/sanity/schemaTypes/caseyCaseStudyType";
 import { SiteHeader } from "@/components/site-header";
 import { SanityFooter } from "@/components/sanity-footer";
-import { CaseStudiesPageClient } from "@/components/case-studies-page-client";
+import { CaseyCaseStudyClient } from "@/components/casey-case-study-client";
 import { pageMeta } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = pageMeta(
-  "Client Case Studies",
-  "See how Google Ads and SEO helped Ridgewell Landscape & Design and Casey Insurance Group bring in revenue, visitors, and leads.",
-  "/case-studies"
+  "Casey Insurance Group Case Study",
+  "Casey Insurance Group's search presence now brings an average of 2,000 organic visitors a month, with more than 100 leads generated through our SEO work.",
+  "/case-studies/casey-insurance-group"
 );
 
-export default async function CasesPage() {
+export default async function CaseyCaseStudyPage() {
   const { data: pageData } = await sanityFetch({
-    query: CASE_STUDIES_PAGE_QUERY,
+    query: CASEY_CASE_STUDY_QUERY,
   });
 
   // Merge Sanity data over defaults — empty/null fields never erase built-in copy
@@ -34,15 +34,15 @@ export default async function CasesPage() {
       )
     : {};
 
-  const content: CaseStudiesPageContent = {
-    ...defaultCaseStudiesContent,
+  const content: CaseyCaseStudyContent = {
+    ...defaultCaseyCaseStudyContent,
     ...clean,
-  } as CaseStudiesPageContent;
+  } as CaseyCaseStudyContent;
 
   return (
     <>
       <SiteHeader />
-      <CaseStudiesPageClient content={content} />
+      <CaseyCaseStudyClient content={content} />
       <SanityFooter />
     </>
   );

@@ -61,6 +61,48 @@ export default defineConfig({
             message: "Google Ads service page content.",
             locations: [{ title: "Google Ads", href: "/services/google-ads" }],
           }),
+          metaAdsPage: defineLocations({
+            message: "Meta Ads service page content.",
+            locations: [{ title: "Meta Ads", href: "/services/meta-ads" }],
+          }),
+          seoPage: defineLocations({
+            message: "SEO service page content.",
+            locations: [{ title: "SEO", href: "/services/seo" }],
+          }),
+          coldEmailPage: defineLocations({
+            message: "Cold Email service page content.",
+            locations: [{ title: "Cold Email", href: "/services/cold-email" }],
+          }),
+          chatgptAdsPage: defineLocations({
+            message: "ChatGPT Ads service page content.",
+            locations: [{ title: "ChatGPT Ads", href: "/services/chatgpt-ads" }],
+          }),
+          aeoPage: defineLocations({
+            message: "AEO service page content.",
+            locations: [{ title: "AEO", href: "/services/aeo" }],
+          }),
+          caseStudiesPage: defineLocations({
+            message: "Case Studies index page content.",
+            locations: [{ title: "Case Studies", href: "/case-studies" }],
+          }),
+          ridgewellCaseStudy: defineLocations({
+            message: "Ridgewell Case Study content.",
+            locations: [
+              {
+                title: "Ridgewell Case Study",
+                href: "/case-studies/ridgewell-landscape-design",
+              },
+            ],
+          }),
+          caseyCaseStudy: defineLocations({
+            message: "Casey Insurance Group Case Study content.",
+            locations: [
+              {
+                title: "Casey Insurance Group Case Study",
+                href: "/case-studies/casey-insurance-group",
+              },
+            ],
+          }),
         },
         mainDocuments: [
           {
@@ -83,7 +125,64 @@ export default defineConfig({
             route: "/services/Google-Ads",
             filter: `_type == "googleAdsPage"`,
           },
+          {
+            route: "/services/meta-ads",
+            filter: `_type == "metaAdsPage"`,
+          },
+          {
+            route: "/services/Meta-Ads",
+            filter: `_type == "metaAdsPage"`,
+          },
+          {
+            route: "/services/seo",
+            filter: `_type == "seoPage"`,
+          },
+          {
+            route: "/services/SEO",
+            filter: `_type == "seoPage"`,
+          },
+          {
+            route: "/services/cold-email",
+            filter: `_type == "coldEmailPage"`,
+          },
+          {
+            route: "/services/Cold-Email",
+            filter: `_type == "coldEmailPage"`,
+          },
+          {
+            route: "/services/chatgpt-ads",
+            filter: `_type == "chatgptAdsPage"`,
+          },
+          {
+            route: "/services/ChatGPT-Ads",
+            filter: `_type == "chatgptAdsPage"`,
+          },
+          {
+            route: "/services/aeo",
+            filter: `_type == "aeoPage"`,
+          },
+          {
+            route: "/services/AEO",
+            filter: `_type == "aeoPage"`,
+          },
+          {
+            route: "/case-studies",
+            filter: `_type == "caseStudiesPage"`,
+          },
+          {
+            route: "/Case-Studies",
+            filter: `_type == "caseStudiesPage"`,
+          },
+          {
+            route: "/case-studies/ridgewell-landscape-design",
+            filter: `_type == "ridgewellCaseStudy"`,
+          },
+          {
+            route: "/case-studies/casey-insurance-group",
+            filter: `_type == "caseyCaseStudy"`,
+          },
         ],
+
       },
     }),
     visionTool({ defaultApiVersion: apiVersion }),
