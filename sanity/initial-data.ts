@@ -9,6 +9,7 @@ export const defaultLandingPageContent = {
   // 1. Hero Section (Screenshot 1)
   googlePartnerImageUrl: "/google-partner.svg",
   googlePartnerImageAlt: "Google Partner",
+  googlePartnerUrl: "https://www.google.com/partners/agency?id=5220670795",
   hostingerPartnerImageUrl: "/hostinger-partner.webp",
   hostingerPartnerImageAlt: "Hostinger Partner",
   heroHeadingLine1: "More good jobs.",

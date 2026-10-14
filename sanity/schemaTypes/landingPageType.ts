@@ -106,6 +106,14 @@ export const landingPageType = defineType({
       description: "Upload a custom Google Partner badge image (defaults to /google-partner.svg).",
     }),
     defineField({
+      name: "googlePartnerUrl",
+      title: "Google Partner URL",
+      type: "url",
+      group: "hero",
+      initialValue: defaultLandingPageContent.googlePartnerUrl,
+      description: "Destination URL when clicking the Google Partner badge.",
+    }),
+    defineField({
       name: "hostingerPartnerImage",
       title: "Hostinger Partner Badge Image",
       type: "image",

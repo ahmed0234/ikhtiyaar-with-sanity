@@ -59,6 +59,7 @@ export const LANDING_PAGE_QUERY = groq`
     },
     "googlePartnerImageUrl": googlePartnerImage.asset->url,
     "googlePartnerImageAlt": googlePartnerImage.alt,
+    googlePartnerUrl,
     hostingerPartnerImage {
       asset-> {
         _id,

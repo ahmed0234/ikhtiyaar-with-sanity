@@ -139,12 +139,24 @@ export function HomePageClient({ content }: HomePageClientProps) {
           <div className="container hero-grid">
             <div className="hero-copy">
               <div className="partner-badges" aria-label="Our partners">
-                <img
-                  className="google-partner-badge"
-                  src={stegaClean(content.googlePartnerImageUrl) || "/google-partner.svg"}
-                  alt={content.googlePartnerImageAlt || "Google Partner"}
-                  data-sanity={dataSanity("googlePartnerImage")}
-                />
+                <a
+                  href={
+                    stegaClean(content.googlePartnerUrl) ||
+                    "https://www.google.com/partners/agency?id=5220670795"
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="google-partner-badge-link"
+                  aria-label="Google Partner (opens in new tab)"
+                  data-sanity={dataSanity("googlePartnerUrl")}
+                >
+                  <img
+                    className="google-partner-badge"
+                    src={stegaClean(content.googlePartnerImageUrl) || "/google-partner.svg"}
+                    alt={content.googlePartnerImageAlt || "Google Partner"}
+                    data-sanity={dataSanity("googlePartnerImage")}
+                  />
+                </a>
                 <img
                   className="hostinger-partner-badge"
                   src={stegaClean(content.hostingerPartnerImageUrl) || "/hostinger-partner.webp"}

@@ -156,6 +156,7 @@ async function sync() {
       heroFormNote: "No pressure. No obligation.",
       heroFormConsent: "We'll only contact you about your request.",
       heroFormPrivacyText: "Privacy Policy",
+      googlePartnerUrl: "https://www.google.com/partners/agency?id=5220670795",
       ...(googlePartner ? { googlePartnerImage: { _type: "image", asset: { _type: "reference", _ref: googlePartner._id } } } : {}),
       ...(hostingerPartner ? { hostingerPartnerImage: { _type: "image", asset: { _type: "reference", _ref: hostingerPartner._id } } } : {}),
 
