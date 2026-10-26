@@ -78,14 +78,16 @@ export async function POST(request: Request) {
       { error: "Please enter a valid phone number." },
       { status: 400 },
     );
+  // Exactly the form's fields; the backend builds the email from these.
   const payload = {
     firstName: values.firstName,
     lastName: values.lastName,
     email: values.email,
     phone: values.phone,
-    subject: `Business inquiry: ${values.company}`,
+    company: values.company,
+    trade: values.trade,
+    city: values.city,
     website: "",
-    message: `I'd like to discuss bringing in more work.\n\nBusiness: ${values.company}\nTrade: ${values.trade}\nCity / service area: ${values.city}\n\nSubmitted through the Ikhtiyaar website.`,
   };
   try {
     const response = await fetch(`${BACKEND_URL}/api/contact`, {
