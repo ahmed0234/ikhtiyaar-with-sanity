@@ -113,10 +113,15 @@ export function HomePageClient({ content }: HomePageClientProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, trade }),
       });
-      if (!response.ok)
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        // 400 = something in the visitor's details; show the specific reason
         throw new Error(
-          "We couldn't send your details just now. Please try again, or call us on (954) 787-3401.",
+          response.status === 400 && result?.error
+            ? result.error
+            : "We couldn't send your details just now. Please try again, or call us on (954) 787-3401.",
         );
+      }
       setStatus("success");
     } catch (err) {
       setStatus("error");
